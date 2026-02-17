@@ -1,0 +1,134 @@
+* {
+    box-sizing: border-box;
+  }
+  
+  #root {
+    width: 100%;
+    padding: 2px;
+  }
+  
+  .custom__editor__container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: center;
+  
+  
+  }
+  
+  .editor__container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+  .editor__container.pdf__actived{
+    border: 1.5px solid #818a8b;
+    padding: 15px;
+  
+  }
+  .pdf-loader{
+        display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+  }
+  
+  .ql-editor {
+    padding: 12px 60px 12px 15px !important;
+  }
+  
+  .editor__toolbar {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 8;
+    max-height: calc(100% - 15px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    margin-right: 2px;
+    scrollbar-color: #646cff #f0f0f0;
+  }
+  
+  .toolbar_icons_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .toolbar_icon,
+  .toolbar_icon_delete_pdf{
+    border-radius: 8px;
+    border: 1px solid #e7e2e2;
+    padding: 6px 10px;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: border-color 0.25s;
+    outline: none !important;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+  }
+  .toolbar_icon_delete_pdf,
+  .toolbar_icon_delete_pdf:hover {
+    background: red;
+    border: none;
+  }
+  
+  .color_picker {
+    position: absolute;
+    top: 0;
+    right: 0;
+    opacity: 0;
+    width: 15px;
+    height: 20px;
+    z-index: 100;
+  }
+  
+  .toolbar_icon:hover {
+    border: 1px solid #4DD0E1;
+    background-color: #B3E5FC;
+  }
+  
+  .toolbar_icon._active {
+    border: 1px solid #4DD0E1;
+    background-color: #B3E5FC;
+  }
+  
+  .ql-editor:focus {
+    outline: 1.5px solid #2196f3;
+    /* Your custom color */
+  }
+  
+  #custom_editor .ql-editor p img {
+    min-width: 250px;
+    max-width: 420px;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .toolbar_icon {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+  
+  }
+  
+  .canva_sratchpad_feature_icons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    gap: 5px;
+    background: #eeddff;
+    width: fit-content;
+    border-radius: 0px 5px 5px 0px;
+    position: absolute;
+    right: -40px;
+    top: 0px;
+    z-index: 5;
+  }

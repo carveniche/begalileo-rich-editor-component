@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { RxTextNone } from "react-icons/rx";
 import { TbReplaceFilled } from "react-icons/tb";
+import style from "../style/Style.module.css"
 // import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html';
 import {
   FaBold,
@@ -27,7 +28,8 @@ export default function ToolBarIcons({
   isPdfUploaded
 
 }) {
-  const {userType} = useAppStore();
+  const {isLiveClass ,userType} = useAppStore();
+  
   const toolbarButtons = [
     { icon: FaBold, format: 'bold', label: 'Bold' },
     { icon: FaItalic, format: 'italic', label: 'Italic' },
@@ -37,7 +39,10 @@ export default function ToolBarIcons({
     { icon: RxTextNone, format: 'removeFormat', label: 'Clear Formatting' },
     { icon: FaFillDrip, format: 'background', label: 'Background Color' },
     { icon: MdFormatColorText, format: 'color', label: 'Text Color' },
-    { icon: FaImage, format: 'image', label: 'Insert Image' },
+    ...(!isLiveClass
+      ? [{ icon: FaImage, format: 'image', label: 'Insert Image' }]
+      : []
+    ),
     ...(content && userType == "student"  
       ? [{ icon: FaFilePdf, format: "pdf", label: "Insert PDF" }]
       : []
@@ -66,14 +71,14 @@ const pdfButtons = [
   }, [showColorPicker]);
 
   return (
-    <div className="editor__toolbar">
-      <div className="toolbar_icons_container">
+    <div className={`${style.editor__toolbar}`}>
+        <div className={`${style.toolbar_icons_container }`}>
         {!isPdfUploaded ?
           <>
             {toolbarButtons.map(({ icon: Icon, value, format, label }, i) => (
-              <div key={i} className="toolbar_icon_wrapper" style={{ position: 'relative', display: 'inline-block' }}>
+              <div key={i} className= {`${style.toolbar_icon_wrapper }`} style={{ position: 'relative', display: 'inline-block' }}>
                 <button
-                  className={`toolbar_icon ${activeIcon === label ? '_active' : ''}`}
+                  className={`${style.toolbar_icon } ${activeIcon === label ? `${style._active }` : ''}`}
                   id={format}
                   onClick={() => applyFormat(format, value, label)}
                   type="button"
@@ -94,7 +99,7 @@ const pdfButtons = [
                   <input
                     ref={colorInputRef}
                     type="color"
-                    className="color_picker"
+                    className={`${style.color_picker }`}
                     onChange={handleColorChange}
                     onBlur={() => handleColorChange("clear")}
                     autoFocus
@@ -110,7 +115,7 @@ const pdfButtons = [
               <button
                 key={i}
                 onClick={() => applyFormat(format)}
-                className={` ${format === "delete_pdf" ? 'toolbar_icon_delete_pdf' : 'toolbar_icon'}`}
+                className={` ${format === "delete_pdf" ? `${style.toolbar_icon_delete_pdf}` : `${style.toolbar_icon}`}`}
                 type="button"
                 title={label}
               >

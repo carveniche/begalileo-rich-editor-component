@@ -7,6 +7,10 @@ export default function AppProvider({ children }) {
     const [isUploadFile, setIsUploadFile] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(true);   
     const [userType, setUserType] = useState("");
+    const [isLiveClass, setIsLiveClass] = useState(false)
+    const [data,setData]= useState("")
+    const [isPdfUploaded, setIsPdfUploaded] = useState(false);
+    
 
     useEffect(() => {
         const rootEl = document.getElementById("root");
@@ -34,7 +38,12 @@ export default function AppProvider({ children }) {
             setIsUploadFile,
             isModalOpen,
             setIsModalOpen,
-            userType
+            userType,
+            setUserType,
+            isLiveClass,
+            setIsLiveClass,
+            data,setData,
+            isPdfUploaded, setIsPdfUploaded,
         }}>
             {children}
         </AppContext.Provider>

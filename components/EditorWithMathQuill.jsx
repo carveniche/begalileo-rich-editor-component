@@ -8,6 +8,9 @@ import BlotFormatter from 'quill-blot-formatter';
 import ImageUploader from "quill-image-uploader";
 import WriteOrUploadModal from './Modals/WriteOrUploadModal';
 import './Style/common.css'
+// import style from "../../Css/New.module.css"
+import style from "../style/Style.module.css"
+
 import ConfirmDialog from './Modals/ConfirmDialog';
 import PdfViewer from '../lib/PdfViewer';
 import { useAppStore } from './Store/AppContext';
@@ -26,10 +29,10 @@ export default function EditorWithMathQuill() {
   const quillRef = useRef(null);
   const fileInputRef = useRef(null);
   const pdfInputRef = useRef(null);
-  const [isPdfUploaded, setIsPdfUploaded] = useState(false);
+  
   const [isShowMsg, setIsShowMsg] = useState(false);
   const [pdfFile, setPdfFile] = useState('');
-  const { userType } = useAppStore();
+  const {isPdfUploaded, setIsPdfUploaded,setData,isLiveClass, userType } = useAppStore();
   const handleChange = (value) => {
     const editor = quillRef.current.getEditor();
     const text = editor.getText().trim(); // plain text without HTML
@@ -53,6 +56,7 @@ export default function EditorWithMathQuill() {
       setContent('');
       return;
     }
+    setData(value)
     setContent(value);
   };
 
@@ -350,8 +354,8 @@ export default function EditorWithMathQuill() {
     }
   }
   const [pdfViewerKey, setPdfViewerKey] = useState(0); // To force re-render PdfViewer
-  const [isErrorMsg, setIsErrorMsg] = useState({type:false,msg:''})
-  
+  const [isErrorMsg, setIsErrorMsg] = useState({ type: false, msg: '' })
+
 
   function handlePdfUpload(event) {
     const file = event.target.files[0];
@@ -361,14 +365,14 @@ export default function EditorWithMathQuill() {
 
     // Validate type
     if (file.type !== "application/pdf") {
-      setIsErrorMsg({type:true,msg:'Only PDF files are allowed.'});
+      setIsErrorMsg({ type: true, msg: 'Only PDF files are allowed.' });
       event.target.value = ""; // reset input
       return;
     }
 
     // Validate size
     if (file.size > maxSize) {
-     setIsErrorMsg({type:true,msg:'PDF files size should be below 5MB.'});
+      setIsErrorMsg({ type: true, msg: 'PDF files size should be below 5MB.' });
       event.target.value = ""; // reset input
       return;
     }
@@ -454,12 +458,30 @@ export default function EditorWithMathQuill() {
       return false;
     }
   }
+
+useEffect(() => {
+  if (quillRef.current) {
+    const editor = quillRef.current.getEditor();
+    editor.root.style.padding = "12px 50px 12px 15px";  
+    editor.root.style.fontFamily = '"GothamRnd-Book2", sans-serif';
+    editor.root.style.fontWeight = "300";
+    editor.root.style.fontSize = "18px";
+    editor.root.style.fontStyle = "normal";
+  }
+}, []);
+
+  useEffect(()=>{
+    if(isLiveClass){
+      setDisablePaste(true)
+    }
+  },[isLiveClass])
+
   return (
-    <div className="custom__editor__container">
-      <div className={`editor__container ${isPdfUploaded ? "pdf__actived" : ""}`}>
+    <div className={`${style.custom__editor__container} rounded-md h-full overflow-x-auto bg-white`}>
+      <div className={`${style.editor__container} ${isPdfUploaded ? `${style.pdf__actived}` : ""}`}>
 
         <ErrorPopup open={isErrorMsg?.type} onClose={setIsErrorMsg} message={isErrorMsg?.msg} />
-        
+
 
         <ConfirmDialog
           open={isShowMsg}
@@ -474,7 +496,7 @@ export default function EditorWithMathQuill() {
             <WriteOrUploadModal handlePdfUpload={applyFormat} />
           </>
         }
-        
+
         <input type='file' ref={fileInputRef} accept='image/*' style={{ display: 'none', opacity: 0 }} onChange={(e) => handleFileUpload(e)} />
         <input
           type="file"
@@ -483,20 +505,20 @@ export default function EditorWithMathQuill() {
           style={{ display: "none" }}
           onChange={handlePdfUpload}
         />
-        <ToolBarIcons
-          content={content}
-          isPdfUploaded={isPdfUploaded}
-          applyFormat={applyFormat}
-          showColorPicker={showColorPicker}
-          handleColorChange={handleColorChange}
-          activeIcon={activeIcon} />
-
-
+          <ToolBarIcons
+            content={content}
+            isPdfUploaded={isPdfUploaded}
+            applyFormat={applyFormat}
+            showColorPicker={showColorPicker}
+            handleColorChange={handleColorChange}
+            activeIcon={activeIcon} />
+            
         {
           pdfFile ?
             <PdfViewer pdf={pdfFile} key={pdfViewerKey} />
             :
             <ReactQuill
+             className={`${style.custom_editor} `}
               id='custom_editor'
               ref={quillRef}
               theme="snow"

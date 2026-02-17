@@ -91,7 +91,16 @@ export default function PdfViewer({ pdf }) {
         const pdf = await generatePdfAnnotated();
         return pdf;
     }
-    window.getAnnotatedPdf = getAnnotatedPdf;
+    
+    useEffect(() => {
+        window.getAnnotatedPdf = getAnnotatedPdf;
+      
+        return () => {
+          delete window.getAnnotatedPdf;
+        };
+      }, [pdf]);
+      
+    // window.getAnnotatedPdf = getAnnotatedPdf;
 
     return (
         <div style={{ display:'flex', width: "fit-content", height: "fit-content", maxWidth: '100%', maxHeight: '100%', position: 'relative', margin: '0 auto' }}>
