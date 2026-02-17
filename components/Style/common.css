@@ -1,0 +1,13 @@
+.ql-pdf-embed,
+.ql-pdf-embed > div{
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+.ql-pdf-embed {
+  background: #fff !important;
+}
+
+iframe{
+    background-color: transparent !important;
+}
