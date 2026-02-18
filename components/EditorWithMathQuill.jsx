@@ -54,6 +54,7 @@ export default function EditorWithMathQuill() {
     }
     if (tempWordCount == 0 && !hasEmbed) {
       setContent('');
+      setData("")
       return;
     }
     setData(value)
@@ -459,16 +460,6 @@ export default function EditorWithMathQuill() {
     }
   }
 
-useEffect(() => {
-  if (quillRef.current) {
-    const editor = quillRef.current.getEditor();
-    editor.root.style.padding = "12px 50px 12px 15px";  
-    editor.root.style.fontFamily = '"GothamRnd-Book2", sans-serif';
-    editor.root.style.fontWeight = "300";
-    editor.root.style.fontSize = "18px";
-    editor.root.style.fontStyle = "normal";
-  }
-}, []);
 
   useEffect(()=>{
     if(isLiveClass){

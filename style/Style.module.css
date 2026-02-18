@@ -18,6 +18,13 @@
   
   }
   
+  .custom_editor :global(.ql-editor) {
+    padding: 12px 50px 12px 15px;
+    font-family: "GothamRnd-Book2", sans-serif;
+    font-weight: 300;
+    font-size: 18px;
+  }
+  
   .editor__container {
     width: 100%;
     height: 100%;
