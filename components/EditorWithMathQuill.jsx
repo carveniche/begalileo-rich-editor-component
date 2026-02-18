@@ -53,7 +53,7 @@ export default function EditorWithMathQuill() {
       }
     }
     if (tempWordCount == 0 && !hasEmbed) {
-      setContent('');
+      setContent(''); 
       setData("")
       return;
     }
