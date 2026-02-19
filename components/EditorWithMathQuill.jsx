@@ -3,9 +3,9 @@ import ReactQuill, { Quill } from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { useState, useRef, useEffect } from 'react';
 import ToolBarIcons from './ToolBarIcons';
-import ImageResize from 'quill-image-resize-module-react';
-import BlotFormatter from 'quill-blot-formatter';
-import ImageUploader from "quill-image-uploader";
+// import ImageResize from 'quill-image-resize-module-react';
+// import BlotFormatter from 'quill-blot-formatter';
+// import ImageUploader from "quill-image-uploader";
 import WriteOrUploadModal from './Modals/WriteOrUploadModal';
 import './Style/common.css'
 // import style from "../../Css/New.module.css"
@@ -16,9 +16,11 @@ import PdfViewer from '../lib/PdfViewer';
 import { useAppStore } from './Store/AppContext';
 import { Alert } from '@mui/material';
 import ErrorPopup from './Modals/ErrorPopup';
-Quill.register('modules/imageResize', ImageResize);
-Quill.register('modules/blotFormatter', BlotFormatter);
-Quill.register("modules/imageUploader", ImageUploader);
+import ResizeModule from 'quill-resize-module';
+Quill.register('modules/resize', ResizeModule);
+// Quill.register('modules/imageResize', ImageResize);
+// Quill.register('modules/blotFormatter', BlotFormatter);
+// Quill.register("modules/imageUploader", ImageUploader);
 
 export default function EditorWithMathQuill() {
   const [content, setContent] = useState('');
@@ -516,13 +518,19 @@ export default function EditorWithMathQuill() {
               value={content}
               onChange={handleChange}
               onKeyDown={handleKeyDown}
+              // modules={{
+              //   blotFormatter: {},
+              //   imageResize: {
+              //     parchment: Quill.import('parchment'),
+              //     modules: ['Resize', 'DisplaySize'],
+              //     minWidth: 150,
+              //     minHeight: 150
+              //   },
+              //   toolbar: false,
+              // }}
               modules={{
-                blotFormatter: {},
-                imageResize: {
-                  parchment: Quill.import('parchment'),
-                  modules: ['Resize', 'DisplaySize'],
-                  minWidth: 150,
-                  minHeight: 150
+                resize: {
+                  modules: ['Resize', 'DisplaySize']
                 },
                 toolbar: false,
               }}
