@@ -11,3 +11,35 @@
 iframe{
     background-color: transparent !important;
 }
+.ql-editor {
+  -webkit-user-modify: read-write-plaintext-only;
+}
+
+grammarly-editor-plugin,
+grammarly-extension,
+grammarly-popups,
+grammarly-mirror,
+grammarly-toolbar,
+[data-grammarly-shadow-root],
+#grammarly-extension,
+.grammarly-desktop-integration {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* ── Block LanguageTool ────────────────────────────────────── */
+.lt-bottom-toolbar,
+#lt-toolbar,
+.ltaddon-popup {
+  display: none !important;
+}
+
+/* ── Block Microsoft Editor ────────────────────────────────── */
+[id^="Microsoft_Editor"],
+.ms-editor-squiggle {
+  display: none !important;
+}
