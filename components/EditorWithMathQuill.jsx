@@ -68,68 +68,75 @@ export default function EditorWithMathQuill() {
 
     const editor = quillRef.current.getEditor();
 
+    let blocking = false;
+
     const handler = (delta, oldDelta, source) => {
       if (source !== "user") return;
+      if (blocking) return;
 
       let hasDelete = false;
       let insertText = "";
-      let insertStart = 0;
-      let seenInsert = false;
-      let cursor = 0;
 
       delta.ops.forEach(op => {
-
-        if (op.retain && !seenInsert) {
-          cursor += op.retain;
-        }
 
         if (op.delete) {
           hasDelete = true;
         }
 
         if (typeof op.insert === "string") {
-          if (!seenInsert) {
-            insertStart = cursor;
-            seenInsert = true;
-          }
-
           insertText += op.insert;
         }
+
       });
 
-      // block replacement behavior
-      if (hasDelete && insertText.length > 0) {
+      // Block OS replacement:
+      // delete old + insert suggestion
+      const isReplacement =
+        hasDelete &&
+        insertText.length > 0;
 
-        console.log("Blocked replacement");
+      // Block suspicious autosuggestion bulk insert
+      const isBulkInsert =
+        !hasDelete &&
+        insertText.length > 1;
 
-        editor.deleteText(
-          insertStart,
-          insertText.length,
-          "silent"
+      if (
+        isReplacement ||
+        isBulkInsert
+      ) {
+
+        console.log(
+          "Blocked autosuggestion",
+          delta
         );
+
+        blocking = true;
+
+        setTimeout(() => {
+
+          editor.history.undo();
+          blocking = false;
+
+        }, 0);
+
+        return;
       }
 
-      // block suspicious multi-char automated inserts
-      else if (insertText.length > 1) {
-
-        console.log("Blocked bulk insert");
-
-        editor.deleteText(
-          insertStart,
-          insertText.length,
-          "silent"
-        );
-      }
     };
 
-    editor.on("text-change", handler);
+    editor.on(
+      "text-change",
+      handler
+    );
 
     return () => {
-      editor.off("text-change", handler);
+      editor.off(
+        "text-change",
+        handler
+      );
     };
 
   }, []);
-
 
 
 
@@ -357,12 +364,10 @@ export default function EditorWithMathQuill() {
         "insertFromPaste",       // paste
         "insertFromDrop",        // drag-drop
         "insertFromYank",        // some platforms
-        "insertCompositionText"  // IME/composition (use carefully)
+        // "insertCompositionText"  // IME/composition (use carefully)
       ];
       if (blockedTypes.includes(e.inputType)) {
         e.preventDefault();
-        console.log("beforeinputevent :", e.inputType);
-        console.log("Blocked:", e.inputType);
       }
     };
 
