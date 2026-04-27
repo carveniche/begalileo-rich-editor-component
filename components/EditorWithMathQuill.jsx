@@ -31,10 +31,10 @@ export default function EditorWithMathQuill() {
   const quillRef = useRef(null);
   const fileInputRef = useRef(null);
   const pdfInputRef = useRef(null);
-  
+
   const [isShowMsg, setIsShowMsg] = useState(false);
   const [pdfFile, setPdfFile] = useState('');
-  const {isPdfUploaded, setIsPdfUploaded,setData,isLiveClass, userType } = useAppStore();
+  const { isPdfUploaded, setIsPdfUploaded, setData, isLiveClass, userType } = useAppStore();
   const handleChange = (value) => {
     const editor = quillRef.current.getEditor();
     const text = editor.getText().trim(); // plain text without HTML
@@ -55,13 +55,89 @@ export default function EditorWithMathQuill() {
       }
     }
     if (tempWordCount == 0 && !hasEmbed) {
-      setContent(''); 
+      setContent('');
       setData("")
       return;
     }
     setData(value)
     setContent(value);
   };
+
+  useEffect(() => {
+    if (!quillRef.current) return;
+
+    const editor = quillRef.current.getEditor();
+
+    let blocking = false;
+
+    const handler = (delta, oldDelta, source) => {
+      if (source !== "user") return;
+      if (blocking) return;
+
+      let hasDelete = false;
+      let insertText = "";
+
+      delta.ops.forEach(op => {
+
+        if (op.delete) {
+          hasDelete = true;
+        }
+
+        if (typeof op.insert === "string") {
+          insertText += op.insert;
+        }
+
+      });
+
+      // Block OS replacement:
+      // delete old + insert suggestion
+      const isReplacement =
+        hasDelete &&
+        insertText.length > 0;
+
+      // Block suspicious autosuggestion bulk insert
+      const isBulkInsert =
+        !hasDelete &&
+        insertText.length > 1;
+
+      if (
+        isReplacement ||
+        isBulkInsert
+      ) {
+
+        console.log(
+          "Blocked autosuggestion",
+          delta
+        );
+
+        blocking = true;
+
+        setTimeout(() => {
+
+          editor.history.undo();
+          blocking = false;
+
+        }, 0);
+
+        return;
+      }
+
+    };
+
+    editor.on(
+      "text-change",
+      handler
+    );
+
+    return () => {
+      editor.off(
+        "text-change",
+        handler
+      );
+    };
+
+  }, []);
+
 
 
   const applyFormat = (format, value = true, label) => {
@@ -248,9 +324,9 @@ export default function EditorWithMathQuill() {
   }
 
 
-
   useEffect(() => {
     if (!quillRef.current) return;
+
     const editor = quillRef.current.getEditor();
 
     const handleKeydown = (e) => {
@@ -277,9 +353,21 @@ export default function EditorWithMathQuill() {
 
     const handleContextMenu = (e) => {
       if (disabllePaste) {
-        // Optional: prevent right-click only for paste
         e.preventDefault();
-        console.log("Right-click disabled!");
+      }
+    };
+
+
+    const handleBeforeInput = (e) => {
+      const blockedTypes = [
+        "insertReplacementText", // suggestions/grammar replacements
+        "insertFromPaste",       // paste
+        "insertFromDrop",        // drag-drop
+        "insertFromYank",        // some platforms
+        // "insertCompositionText"  // IME/composition (use carefully)
+      ];
+      if (blockedTypes.includes(e.inputType)) {
+        e.preventDefault();
       }
     };
 
@@ -287,16 +375,17 @@ export default function EditorWithMathQuill() {
     editor.root.addEventListener('paste', handlePaste);
     editor.root.addEventListener('drop', handleDrop);
     editor.root.addEventListener('contextmenu', handleContextMenu);
+    editor.root.addEventListener('beforeinput', handleBeforeInput); // 👈 HERE
 
     return () => {
       editor.root.removeEventListener('keydown', handleKeydown);
       editor.root.removeEventListener('paste', handlePaste);
       editor.root.removeEventListener('drop', handleDrop);
       editor.root.removeEventListener('contextmenu', handleContextMenu);
+      editor.root.removeEventListener('beforeinput', handleBeforeInput); // 👈 CLEANUP
     };
   }, [disabllePaste]);
 
-  // 1️⃣ Upload file and get server URL
   async function handleFileUpload(event) {
     const file = event.target.files[0];
     if (!file || !quillRef.current) return;
@@ -463,11 +552,11 @@ export default function EditorWithMathQuill() {
   }
 
 
-  useEffect(()=>{
-    if(isLiveClass){
+  useEffect(() => {
+    if (isLiveClass) {
       setDisablePaste(true)
     }
-  },[isLiveClass])
+  }, [isLiveClass])
 
   return (
     <div className={`${style.custom__editor__container} rounded-md h-full overflow-x-auto bg-white`}>
@@ -498,20 +587,20 @@ export default function EditorWithMathQuill() {
           style={{ display: "none" }}
           onChange={handlePdfUpload}
         />
-          <ToolBarIcons
-            content={content}
-            isPdfUploaded={isPdfUploaded}
-            applyFormat={applyFormat}
-            showColorPicker={showColorPicker}
-            handleColorChange={handleColorChange}
-            activeIcon={activeIcon} />
-            
+        <ToolBarIcons
+          content={content}
+          isPdfUploaded={isPdfUploaded}
+          applyFormat={applyFormat}
+          showColorPicker={showColorPicker}
+          handleColorChange={handleColorChange}
+          activeIcon={activeIcon} />
+
         {
           pdfFile ?
             <PdfViewer pdf={pdfFile} key={pdfViewerKey} />
             :
             <ReactQuill
-             className={`${style.custom_editor} `}
+              className={`${style.custom_editor} `}
               id='custom_editor'
               ref={quillRef}
               theme="snow"
