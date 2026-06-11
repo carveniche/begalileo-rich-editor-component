@@ -11,9 +11,9 @@
 iframe{
     background-color: transparent !important;
 }
-.ql-editor {
+/* .ql-editor {
   -webkit-user-modify: read-write-plaintext-only;
-}
+} */
 
 grammarly-editor-plugin,
 grammarly-extension,
