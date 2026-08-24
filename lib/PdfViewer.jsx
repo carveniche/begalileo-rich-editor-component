@@ -8,11 +8,11 @@ import { useAppStore } from "../components/Store/AppContext";
 // import pdfbase64 from "./pdfbase64";
 // import { pdfjs } from 'react-pdf';
 
-// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-//   'pdfjs-dist/build/pdf.worker.min.mjs',
-//   import.meta.url,
-// ).toString();
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.min.js",
+  import.meta.url
+).toString();
+// pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 export default function PdfViewer({ pdf }) {
     // pdf = pdfbase64()
@@ -127,7 +127,8 @@ export default function PdfViewer({ pdf }) {
               <Document file={pdf} onLoadSuccess={onLoadSuccess}
                 loading={<div className="pdf-loader"><CircularProgress color="secondary" /> <br /> Loading PDF...</div>}
             >
-                {Array.from(new Array(numPages), (_, index) => (
+                {numPages &&
+                 Array.from(new Array(numPages), (_, index) => (
                     <div
                         key={index}
                         onClick={() => setActivePage(index)}
